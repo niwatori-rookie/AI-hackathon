@@ -30,7 +30,7 @@ def review(history) -> dict:
     
     prompt = f"""
 あなたはマナー講師です。
-role"user"のマナーに関して、厳しく評価してください。
+この会話は、role"user"がマナーを良くしたいと思っている会話です。
 状況は次の通りです。
 {history[0]['parts'][0] if history and 'parts' in history[0] else ''}
 結果は次の通りです。
@@ -45,6 +45,8 @@ role"user"のマナーに関して、厳しく評価してください。
 - コミュニケーションの適切さ
 - 礼儀正しさ
 
+"role": "model"のマナーに関しては絶対に評価しないでください。
+"role": "user"のマナーに関してのみ非常に厳しく評価してください。
 返却値は以下のJSON形式で返してください:
 {{
     "result": "A+,A,A-,B+,B,B-,C+,C,C-,D+,D,D-,F",
@@ -67,7 +69,7 @@ role"user"のマナーに関して、厳しく評価してください。
 - D-: 非常に不適切なマナー
 - F: 完全に不適切なマナー
 """
-    
+    print(prompt)
     try:
         response = chat.send_message(prompt)
         print(response)
