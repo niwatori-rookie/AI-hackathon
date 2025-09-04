@@ -1,58 +1,93 @@
 import streamlit as st
+import chat #chat.pyの関数を使うためにインポート
+
 
 def display_scenario_selector() -> str:
     """
     研修シナリオを選択し、選択結果を文字列として返す関数。
     """
+
     st.markdown("## 研修シナリオを選択")
 
     # シナリオのデータ定義
     scenarios = {
-        "顧客対応": "お客様への挨拶、商品説明、クレーム対応など",
-        "上司対応": "報告・連絡・相談、会議での発言など",
-        "電話応対": "取次ぎ、アポイント調整、問い合わせ対応など",
-        "会議・プレゼン": "資料説明、質疑応答、意見交換など"
+        "顧客対応": "お客様への挨拶、商品説明、クレーム対応",
+        "上司対応": "報告・連絡・相談、会議での発言",
+        "電話応対": "取次ぎ、アポイント調整、問い合わせ対応",
+        "会議・プレゼン": "資料説明、質疑応答、意見交換"
     }
 
     # ユーザーが選択したシナリオを保存するための変数
     # 初期値はNoneとし、何も選択されていない状態から始める
     selected_scenario = st.session_state.get("selected_scenario", None)
 
+
     # Streamlitの`columns`と`button`を組み合わせて、選択肢をカード風に表示
     cols = st.columns(len(scenarios))
     clicked = False
+    icons = ['👥', '👨‍💼', '📞', '📈']
     for i, (key, value) in enumerate(scenarios.items()):
         with cols[i]:
-            # アイコンを定義
-            icons = ['👥', '👨‍💼', '📞', '📈']
             icon = icons[i] if i < len(icons) else ''
-            
-            # ボタンのラベルに絵文字とタイトル、説明を組み込む
             label = f"{icon} **{key}**\n\n{value}"
-            
-            # ボタンがクリックされたらセッションステートを更新
-            if st.button(label, key=f"scenario_btn_{key}", use_container_width=True):
+            # 選択されたカードの色を変える
+            card_color = "#e6f7ff" if selected_scenario == key else "#f9f9f9"
+            st.markdown(f"<div style='background-color:{card_color}; padding:10px; border-radius:0px; display:flex; align-items:center; justify-content:center; height:5px;'>", unsafe_allow_html=True)
+            # カードボタンのみ縦長
+            card_button_css = """
+        <style>
+        div[data-testid='stButton'] button.card-btn {
+        height: 240px !important;
+        font-size: 1.1em;
+        white-space: pre-line;
+        }
+        </style>
+                """
+            st.markdown(card_button_css, unsafe_allow_html=True)
+            if st.button(label, key=f"scenario_btn_{key}", use_container_width=True, help=None, args=None, kwargs=None):
                 st.session_state["selected_scenario"] = key
                 clicked = True
+            st.markdown("</div>", unsafe_allow_html=True)
     
     st.write("---")
     
-    # 決定ボタンを配置
-    if st.button("決定", use_container_width=True):
-        # 決定ボタンが押された時の処理
+    # 決定ボタン用CSS（小さく）
+    decision_button_css = """
+    <style>
+    div[data-testid='stButton'] button.decision-btn {
+    height: 40px !important;
+    font-size: 1em;
+    }
+    </style>
+    """
+    st.markdown(decision_button_css, unsafe_allow_html=True)
+    if st.button("決定", key="decision_btn", use_container_width=True):
         if selected_scenario:
-            # シナリオが選択されていれば、質問データを生成して返す
-            start_question = f"{selected_scenario}のロールプレイを始めましょう。あなたがAIで、私は研修生です。最初の質問をしてください。"
+            scenario_desc = scenarios[selected_scenario]
+            start_question = f"{selected_scenario}（{scenario_desc}）のロールプレイを始めましょう。あなたがAIで、私は研修生です。最初の質問をしてください。"
             return start_question
         else:
-            # シナリオが選択されていなければ警告メッセージを表示し、Noneを返す
             st.warning("シナリオを選択してください。")
-            return None
+            # returnせず、履歴ボタンまで描画
     
     # ボタンがクリックされただけで再描画するためのリラン
     if clicked:
         st.rerun() 
     
+    # 履歴ボタン用CSS（小さく）
+    history_button_css = """
+    <style>
+    div[data-testid='stButton'] button.history-btn {
+    height: 40px !important;
+    font-size: 1em;
+    }
+    </style>
+    """
+    st.markdown(history_button_css, unsafe_allow_html=True)
+    st.write("")
+    if st.button("チャットの履歴を見る", key="history_btn", use_container_width=True):
+        st.session_state.page = "history"
+        st.rerun()
     return None
 
 def main():
@@ -64,7 +99,7 @@ def main():
 
     # セッションステートの初期化
     if "page" not in st.session_state:
-        st.session_state.page = "page1"
+        st.session_state.page = "title"
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
@@ -73,19 +108,24 @@ def main():
     st.write("---")
 
     # ページ制御ロジック
-    if st.session_state.page == "page1":
+    if st.session_state.page == "title":
         # display_scenario_selectorから返される質問データを受け取る
         start_chat_question = display_scenario_selector()
-        
         if start_chat_question:
-            # 質問データが返されたらページを遷移
             st.session_state.start_chat_question = start_chat_question
             st.session_state.page = "chat.py"
             st.rerun()
-
     elif st.session_state.page == "chat.py":
-        #以下処理をchat.pyに移動
+        # chat.pyのチャット画面表示関数を呼び出す
+        chat.display_chat_page(st.session_state.start_chat_question)
         return 0
+    elif st.session_state.page == "history":
+        st.markdown("## チャット履歴")
+        for i, msg in enumerate(st.session_state.get("chat_history", [])):
+            st.write(f"{i+1}: {msg}")
+        if st.button("戻る", key="back_btn", use_container_width=True):
+            st.session_state.page = "title"
+            st.rerun()
 
 if __name__ == "__main__":
     main()
