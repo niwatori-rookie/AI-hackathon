@@ -4,15 +4,31 @@ from dotenv import load_dotenv
 import os
 import title_new as title
 
-def _to_gemini_history(messages):#メッセージ履歴をgemini形式に変換
+# def _to_gemini_history(messages):#メッセージ履歴をgemini形式に変換
+#     history = []
+#     for m in st.session_state.notdisplay:
+#         role = "user" if m.get("role") == "user" else "model"#非表示部分追加
+#         history.append({"role": role, "parts": [m.get("content", "")]})
+#     for m in messages:
+#         role = "user" if m.get("role") == "user" else "model"#表示部分追加
+#         history.append({"role": role, "parts": [m.get("content", "")]})
+#     return history
+
+def _to_gemini_history(messages):
     history = []
-    for m in st.session_state.notdisplay:
-        role = "user" if m.get("role") == "user" else "model"#非表示部分追加
-        history.append({"role": role, "parts": [m.get("content", "")]})
+    
+    # 状況を最初に追加
+    if st.session_state.situation:
+        history.append({
+            "role": "user", 
+            "parts": [f"会話状況: {st.session_state.situation}"]
+        })
+    
     for m in messages:
-        role = "user" if m.get("role") == "user" else "model"#表示部分追加
+        role = "user" if m.get("role") == "user" else "model"
         history.append({"role": role, "parts": [m.get("content", "")]})
     return history
+
 
 def _stream_chunks(response):#ストリームチャンクをテキストに変換
     for chunk in response:
@@ -20,7 +36,8 @@ def _stream_chunks(response):#ストリームチャンクをテキストに変�
         if text:
             yield text
 
-
+def first_chat(prompt):
+    st.session_state.situation = prompt
 
 def chatpage(start_question):
     load_dotenv("key.env")
@@ -36,20 +53,20 @@ def chatpage(start_question):
         st.session_state.messages = []
 
 
-    msg=start_question
+    first_chat(start_question)
 
 
-    if "notdisplay" not in st.session_state:
-        st.session_state.notdisplay = [
-            {
-                "role": "user", 
-                "content": msg
-            },
-            {
-                "role": "assistant", 
-                "content": "了解しました。これからはそのように対応したします。"
-            }
-        ]
+    # if "notdisplay" not in st.session_state:
+    #     st.session_state.notdisplay = [
+    #         {
+    #             "role": "user", 
+    #             "content": msg
+    #         },
+    #         {
+    #             "role": "assistant", 
+    #             "content": "了解しました。これからはそのように対応したします。"
+    #         }
+    #     ]
 
     for message in st.session_state.messages:#メッセージ履歴表示(場面設定は非表示)
         with st.chat_message(message["role"]):
