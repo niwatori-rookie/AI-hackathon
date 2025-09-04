@@ -3,6 +3,7 @@ import streamlit as st
 from dotenv import load_dotenv
 import os
 import json
+import pathlib
 
 load_dotenv()
 
@@ -98,6 +99,7 @@ def review_container(history) -> bool:
     else:
         return False
     with st.container():
+        edit_output_json(result)
         st.write("## Geminiからの評価")
         
         st.write("### 良い点")
@@ -108,6 +110,42 @@ def review_container(history) -> bool:
             st.write(f"- {bad}")
         st.write("### 総合評価")
         st.write(result["result"])
+    return True
+
+def edit_output_json(result) -> bool:
+    """
+    出力JSONを編集する関数
+    
+    args:
+        result: 評価結果
+
+    return:
+        bool: 問題なく処理が完了したか
+    """
+    try:
+        if pathlib.Path("output.json").exists():
+            with open("output.json", "r") as f:
+                data = json.load(f)
+            data.append(result)
+            with open("output.json", "w") as f:
+                json.dump(data, f)
+        else:
+            with open("output.json", "w") as f:
+                    json.dump([result], f)
+    except Exception as e:
+        return False
+    return True
+
+
+def title_button():
+    """
+    タイトルに戻るボタン
+
+    return:
+        bool: 問題なく処理が完了したか
+    """
+    if st.button("タイトルに戻る"):
+        st.session_state.page = "title_new.py"
     return True
 
 if __name__ == "__main__":
@@ -139,3 +177,4 @@ if __name__ == "__main__":
             st.error("JSON形式が正しくありません。")
         except Exception as e:
             st.error(f"エラーが発生しました: {str(e)}")
+    title_button()
