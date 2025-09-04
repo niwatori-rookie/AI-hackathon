@@ -118,14 +118,19 @@ def main():
     elif st.session_state.page == "chat.py":
         # chat.pyのチャット画面表示関数を呼び出す
         chat.display_chat_page(st.session_state.start_chat_question)
+        #st.session_state.start_chat_questionのデバック用｛例：上司対応（報告・連絡・相談、会議での発言）のロールプレイを始めましょう。あなたがAIで、私は研修生です。最初の質問をしてください。｝
+        #print(st.session_state.start_chat_question)
         return 0
     elif st.session_state.page == "history":
-        st.markdown("## チャット履歴")
-        for i, msg in enumerate(st.session_state.get("chat_history", [])):
-            st.write(f"{i+1}: {msg}")
-        if st.button("戻る", key="back_btn", use_container_width=True):
-            st.session_state.page = "title"
-            st.rerun()
+        #履歴の???.pyの画面表示関数を呼び出す
+        return 0
+        
+        #st.markdown("## チャット履歴")
+        #for i, msg in enumerate(st.session_state.get("chat_history", [])):
+            #st.write(f"{i+1}: {msg}")
+        #if st.button("戻る", key="back_btn", use_container_width=True):
+            #st.session_state.page = "title"
+            #st.rerun()
 
 if __name__ == "__main__":
     main()
