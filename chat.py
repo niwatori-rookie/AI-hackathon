@@ -21,6 +21,14 @@ for message in st.session_state.messages:
 
 def _to_gemini_history(messages):
     history = []
+    
+    # 状況を最初に追加
+    if st.session_state.situation:
+        history.append({
+            "role": "user", 
+            "parts": [f"会話状況: {st.session_state.situation}"]
+        })
+    
     for m in messages:
         role = "user" if m.get("role") == "user" else "model"
         history.append({"role": role, "parts": [m.get("content", "")]})
@@ -32,7 +40,11 @@ def _stream_chunks(response):
         if text:
             yield text
 
+def first_chat(prompt):
+    st.session_state.situation = prompt
+
 if prompt := st.chat_input("What is up?"):
+    first_chat("あなたは厳格な上司です。すぐキレます。")
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
