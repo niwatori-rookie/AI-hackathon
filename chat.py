@@ -105,18 +105,24 @@ def chatpage(start_question: str):
 
     #評価ボタン
     if st.button("評価"):
-        if st.button("評価実行"):
-            try:
-                history = json.loads(final_text)
-                review_container(history)
-                title_button()
-            except json.JSONDecodeError:
-                st.error("JSON形式が正しくありません。")
-            except Exception as e:
-                st.error(f"エラーが発生しました: {str(e)}")
+            st.session_state.final_text = st.session_state.messages
+            st.session_state.page = "page3"
+            st.rerun()
+
             
-        st.session_state.messages = []
-        st.success("チャット履歴をリセットしました。")
+            
+
+
+            # try:
+            #     history = json.loads(final_text)
+            #     review_container(history)
+            #     title_button()
+            # except json.JSONDecodeError:
+            #     st.error("JSON形式が正しくありません。")
+            # except Exception as e:
+            #     st.error(f"エラーが発生しました: {str(e)}")
+            
+
 
 
 

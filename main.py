@@ -23,7 +23,7 @@ def main():
     st.write("---")
 
     # ページ制御ロジック
-    print(st.session_state)
+    
     if st.session_state.page == "page1":
             # display_scenario_selectorから返される質問データを受け取る
         start_chat_question = title.display_scenario_selector()
@@ -36,12 +36,28 @@ def main():
             st.rerun()
 
 
-
     elif st.session_state.page == "page2":
-            # ここで chat_remake.py のレイアウトを表示
         chat.chatpage(st.session_state.start_chat_question)#フラグ，チャット履歴
-        #st.rerun()
-    
+
+    elif st.session_state.page == "page3":
+        try:
+            history = [
+            {"role": "user", "parts": ["こんにちは、お疲れ様です。"]},
+            {"role": "model", "parts": ["こんにちは！お疲れ様です。何かお手伝いできることはありますか？"]},
+            {"role": "user", "parts": ["ありがとうございます。資料の件でご相談があります。"]},
+            {"role": "model", "parts": ["承知いたしました。どのような資料でしょうか？"]}
+            ]
+            review_container(history)
+            title_button()
+        except json.JSONDecodeError:
+            st.error("JSON形式が正しくありません。")
+        except Exception as e:
+            st.error(f"エラーが発生しました: {str(e)}")
+            
+        st.session_state.messages = []
+        st.success("チャット履歴をリセットしました。")
+
+
 
 
 
