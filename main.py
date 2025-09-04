@@ -61,20 +61,22 @@ def main():
                 st.session_state.page == "page3"
         
         elif st.session_state.page == "page3":
-            try:
-                history = json.loads(user_input)
-                review_container(history)
-                title_button()
-            except json.JSONDecodeError:
-                st.error("JSON形式が正しくありません。")
-            except Exception as e:
-                st.error(f"エラーが発生しました: {str(e)}")
+            if st.button("評価実行"):
+                try:
+                    history = json.loads(go_review[1])
+                    review_container(history)
+                    title_button()
+                except json.JSONDecodeError:
+                    st.error("JSON形式が正しくありません。")
+                except Exception as e:
+                    st.error(f"エラーが発生しました: {str(e)}")
 
 
     #title_new.pyを使っても文字が返されない
 
 
-
+#chatpage()の引数変更
+#ファイル名の変更
 
 
 
