@@ -2,22 +2,17 @@ import google.generativeai as genai
 import streamlit as st
 from dotenv import load_dotenv
 import os
+# import title_new as title
 
-load_dotenv()
-
-st.title("gemini-like clone")
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-if "gemini_model" not in st.session_state:
-    st.session_state["gemini_model"] = "gemini-2.0-flash"
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# def _to_gemini_history(messages):#メッセージ履歴をgemini形式に変換
+#     history = []
+#     for m in st.session_state.notdisplay:
+#         role = "user" if m.get("role") == "user" else "model"#非表示部分追加
+#         history.append({"role": role, "parts": [m.get("content", "")]})
+#     for m in messages:
+#         role = "user" if m.get("role") == "user" else "model"#表示部分追加
+#         history.append({"role": role, "parts": [m.get("content", "")]})
+#     return history
 
 def _to_gemini_history(messages):
     history = []
@@ -34,7 +29,8 @@ def _to_gemini_history(messages):
         history.append({"role": role, "parts": [m.get("content", "")]})
     return history
 
-def _stream_chunks(response):
+
+def _stream_chunks(response):#ストリームチャンクをテキストに変換
     for chunk in response:
         text = getattr(chunk, "text", None)
         if text:
@@ -43,17 +39,52 @@ def _stream_chunks(response):
 def first_chat(prompt):
     st.session_state.situation = prompt
 
-if prompt := st.chat_input("What is up?"):
-    first_chat("あなたは厳格な上司です。すぐキレます。")
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+def chatpage(start_question: str):
+    load_dotenv()
 
-    model = genai.GenerativeModel(st.session_state["gemini_model"])
-    chat = model.start_chat(history=_to_gemini_history(st.session_state.messages[:-1]))
+    st.title("gemini-like clone")
 
-    with st.chat_message("assistant"):
-        response_stream = chat.send_message(prompt, stream=True)
-        final_text = st.write_stream(_stream_chunks(response_stream))
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-    st.session_state.messages.append({"role": "assistant", "content": final_text or ""})
+    if "gemini_model" not in st.session_state:
+        st.session_state["gemini_model"] = "gemini-2.0-flash"
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    if "situation" not in st.session_state:
+        st.session_state.situation = ""
+
+    # 最初の状況を設定（都度上書きしない）
+    if not st.session_state.situation:
+        first_chat(start_question)
+
+    # これまでのメッセージを表示
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    # 入力受付
+    if prompt := st.chat_input("What is up?"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        model = genai.GenerativeModel(st.session_state["gemini_model"])
+        chat = model.start_chat(history=_to_gemini_history(st.session_state.messages[:-1]))
+
+        with st.chat_message("assistant"):
+            response_stream = chat.send_message(content=prompt, stream=True)
+            final_text = st.write_stream(_stream_chunks(response_stream))
+
+        st.session_state.messages.append({"role": "assistant", "content": final_text or ""})
+
+    # リセットボタン
+    if st.button("やめる"):
+        st.session_state.messages = []
+        st.success("チャット履歴をリセットしました。")
+        st.experimental_rerun()
+
+
+if __name__ == "__main__":
+    chatpage("あなたについて教えてください")
