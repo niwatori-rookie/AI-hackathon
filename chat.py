@@ -43,8 +43,6 @@ def reset_session_state():
 
 def chatpage(start_question: str):
 
-    st.title("gemini-like clone")
-
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
     if "gemini_model" not in st.session_state:
@@ -68,6 +66,7 @@ def chatpage(start_question: str):
                 "あなたは会話の相手役です。以下の会話状況に合わせて、"
                 "会話を自然に開始する最初の一文だけを、短く、状況に相応しい口調で生成してください。\n"
                 f"会話状況: {st.session_state.situation}"
+                "発言のみを生成してください。"
             )
             response = chat.send_message(system_prompt)
             opening_line = getattr(response, "text", "") or "こんにちは。"

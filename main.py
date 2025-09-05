@@ -52,6 +52,10 @@ def main():
             
         st.session_state.messages = []
         st.success("チャット履歴をリセットしました。")
+        st.session_state.situation = ""
+        st.session_state.final_text = []
+        st.session_state.start_chat_question = ""
+        print(st.session_state)
         st.session_state.page = "page1"
 
     
