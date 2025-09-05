@@ -25,8 +25,8 @@ def review(history) -> dict:
     conversation_text = ""
     for message in history:
         role = message.get("role", "")
-        parts = message.get("parts", [])
-        content = parts[0] if parts else ""
+        parts = message.get("content", "")
+        content = parts if parts else ""
         conversation_text += f"{role}: {content}\n"
     
     prompt = f"""

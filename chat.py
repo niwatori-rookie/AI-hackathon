@@ -40,8 +40,14 @@ def _stream_chunks(response):#ストリームチャンクをテキストに変�
 def first_chat(prompt):
     st.session_state.situation = prompt
 
+def get_session_state():
+    return st.session_state
+
+def reset_session_state():
+    st.session_state.messages = []
+    st.rerun()
+
 def chatpage(start_question: str):
-    load_dotenv("key.env")##push時に消す
 
     st.title("gemini-like clone")
 
@@ -97,7 +103,7 @@ def chatpage(start_question: str):
 
     # リセットボタン
     if st.button("やめる"):
-        st.session_state.messages = []
+        reset_session_state()
         st.success("チャット履歴をリセットしました。")
         st.session_state.page = "page1"
         st.rerun()
@@ -106,7 +112,9 @@ def chatpage(start_question: str):
     #評価ボタン
     if st.button("評価"):
             st.session_state.final_text = st.session_state.messages
+            
             st.session_state.page = "page3"
+            
             st.rerun()
 
             

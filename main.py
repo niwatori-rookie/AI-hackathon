@@ -41,12 +41,7 @@ def main():
 
     elif st.session_state.page == "page3":
         try:
-            history = [
-            {"role": "user", "parts": ["こんにちは、お疲れ様です。"]},
-            {"role": "model", "parts": ["こんにちは！お疲れ様です。何かお手伝いできることはありますか？"]},
-            {"role": "user", "parts": ["ありがとうございます。資料の件でご相談があります。"]},
-            {"role": "model", "parts": ["承知いたしました。どのような資料でしょうか？"]}
-            ]
+            history = chat.get_session_state().messages
             review_container(history)
             title_button()
         except json.JSONDecodeError:
@@ -56,25 +51,7 @@ def main():
             
         st.session_state.messages = []
         st.success("チャット履歴をリセットしました。")
-
-
-
-
-
-
-
-
-#chatpage()の引数変更
-#ファイル名の変更
-
-
-
-
-
-
-
-
-
+        st.session_state.page = "page1"
 
 
 
