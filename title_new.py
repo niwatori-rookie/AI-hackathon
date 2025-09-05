@@ -50,7 +50,11 @@ def display_scenario_selector() -> str:
             st.markdown("</div>", unsafe_allow_html=True)
     
     st.write("---")
-    
+    st.write("## カスタマイズ")
+    custom_situation = ""
+    custom_situation = st.text_area("他にカスタマイズしたい状況を入力してください", value="")
+    print(custom_situation)
+    st.write("---")
     # 決定ボタン用CSS（小さく）
     decision_button_css = """
     <style>
@@ -64,7 +68,15 @@ def display_scenario_selector() -> str:
     if st.button("決定", key="decision_btn", use_container_width=True):
         if selected_scenario:
             scenario_desc = scenarios[selected_scenario]
-            start_question = f"{selected_scenario}（{scenario_desc}）のロールプレイを始めましょう。あなたがAIで、私は研修生です。最初の質問をしてください。"
+            start_question = f"""
+シナリオ:
+{selected_scenario}（{scenario_desc}）のシナリオで会話を進めましょう。
+私は学生であり、正しいマナーを身に着けようとしています。
+あなたは、私よりも上の立場であり、詳細はカスタマイズしたい場合はカスタマイズを入力してください。
+カスタマイズ:
+{custom_situation}
+最初の質問をしてください。
+"""		
             return start_question
         else:
             st.warning("シナリオを選択してください。")
