@@ -1,6 +1,7 @@
+#追加要素
 import streamlit as st
 
-def show_chat_history(history):
+def log_chat_history(history):
 	"""
 	チャット履歴（リスト）を受け取り、画面に表示する関数。
 	"""
