@@ -2,6 +2,7 @@ import title_new as title
 import chat
 from review import *
 import streamlit as st
+import json
 
 
 
@@ -53,7 +54,21 @@ def main():
         st.success("チャット履歴をリセットしました。")
         st.session_state.page = "page1"
 
-
+    
+    if st.session_state.page == "page4":
+        st.markdown("## チャット履歴")
+        st.markdown("---")
+        with open("output.json", "r") as f:
+            data = json.load(f)
+        for msg in data:
+            with st.container():
+                st.write(f"タイトル: {msg['title']}")
+                st.write(f"日付: {msg['date']}")
+                st.write(f"評価結果: {msg['result']}")
+                st.markdown("---")
+        if st.button("戻る", key="back_btn", use_container_width=True):
+            st.session_state.page = "page1"
+            st.rerun()
 
 
 

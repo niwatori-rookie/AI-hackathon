@@ -70,7 +70,7 @@ def main():
             except Exception as e:
                 st.error(f"エラーが発生しました: {str(e)}")
 
-
+	
     #title_new.pyを使っても文字が返されない
 
 

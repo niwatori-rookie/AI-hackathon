@@ -53,6 +53,8 @@ def review(history) -> dict:
     "result": "A+,A,A-,B+,B,B-,C+,C,C-,D+,D,D-,F",
     "good": ["", ...],
     "bad": ["", ...],
+    "title": "会話のタイトル",
+    "date": "会話の日付",
 }}
 
 評価ランク
