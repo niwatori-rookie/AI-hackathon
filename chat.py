@@ -5,15 +5,6 @@ import os
 from review import *
 # import title_new as title
 
-# def _to_gemini_history(messages):#メッセージ履歴をgemini形式に変換
-#     history = []
-#     for m in st.session_state.notdisplay:
-#         role = "user" if m.get("role") == "user" else "model"#非表示部分追加
-#         history.append({"role": role, "parts": [m.get("content", "")]})
-#     for m in messages:
-#         role = "user" if m.get("role") == "user" else "model"#表示部分追加
-#         history.append({"role": role, "parts": [m.get("content", "")]})
-#     return history
 
 def _to_gemini_history(messages):
     history = []
@@ -38,7 +29,10 @@ def _stream_chunks(response):#ストリームチャンクをテキストに変�
             yield text
 
 def first_chat(prompt):
-    st.session_state.situation = prompt
+    if prompt == "":
+        st.session_state.situation = ""
+    else:
+	    st.session_state.situation = prompt
 
 def get_session_state():
     return st.session_state
@@ -116,23 +110,6 @@ def chatpage(start_question: str):
             st.session_state.page = "page3"
             
             st.rerun()
-
-            
-            
-
-
-            # try:
-            #     history = json.loads(final_text)
-            #     review_container(history)
-            #     title_button()
-            # except json.JSONDecodeError:
-            #     st.error("JSON形式が正しくありません。")
-            # except Exception as e:
-            #     st.error(f"エラーが発生しました: {str(e)}")
-            
-
-
-
 
 if __name__ == "__main__":
     chatpage("あなたについて教えてください")

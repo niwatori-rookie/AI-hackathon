@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import json
 import pathlib
+from datetime import datetime
 
 load_dotenv()
 
@@ -72,7 +73,6 @@ def review(history) -> dict:
 - D-: 非常に不適切なマナー
 - F: 完全に不適切なマナー
 """
-    print(prompt)
     try:
         response = chat.send_message(prompt)
         print(response)
@@ -125,6 +125,7 @@ def edit_output_json(result) -> bool:
         bool: 問題なく処理が完了したか
     """
     try:
+        result["date"] = datetime.now().strftime("%Y-%m-%d")
         if pathlib.Path("output.json").exists():
             with open("output.json", "r") as f:
                 data = json.load(f)
