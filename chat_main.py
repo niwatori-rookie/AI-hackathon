@@ -4,23 +4,6 @@ from review import *
 import streamlit as st
 import time
 
-"""
-class chat_log:
-    def __init__(self):
-        self.user = "user"
-        self.gemini = "gemini"
-        # if "chat_log" not in st.session_state:
-        #     st.session_state.chat_log = []
-        self.chatlog = []
-    
-
-    def clear_history(self):
-        self.chat_log = []
-    
-    def add_history(self,chat):
-        self.chatlog.append(chat)
-"""
-
 
 
 def main():
