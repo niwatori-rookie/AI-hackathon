@@ -98,7 +98,7 @@ def display_scenario_selector() -> str:
     st.markdown(history_button_css, unsafe_allow_html=True)
     st.write("")
     if st.button("チャットの履歴を見る", key="history_btn", use_container_width=True):
-        st.session_state.page = "history"
+        st.session_state.page = "page4"
         st.rerun()
     return None
 
